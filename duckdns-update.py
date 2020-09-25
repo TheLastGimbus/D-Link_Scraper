@@ -59,11 +59,14 @@ if dl.public_ip is None or not re.match(r'\d+\.\d+\.\d+\.\d+', dl.public_ip):
     print('Got invalid IP from router! Exit!')
     exit(-1)
 
+print('IP from router: ' + dl.public_ip)
+
 if not args.no_cache:
     print('Checking last known IP...')
     try:
         with open(args.cache_file, 'r') as f:
             saved_ip = f.read()
+            print('Last IP: ' + saved_ip)
     except:
         saved_ip = 'error'
         print(f"Can't open cache file ({args.cache_file})")
