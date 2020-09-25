@@ -47,6 +47,15 @@ class DLink:
         if not login_r.ok:
             raise IOError
 
+    def logout(self):
+        """
+        Log out of current session
+
+        You should always do this if you don' want to get
+        "admin is currently logged in" all the times
+        """
+        self._session.get(self._url + '/log/out')
+
     def get_main_site(self):
         """
         Loads main site on router

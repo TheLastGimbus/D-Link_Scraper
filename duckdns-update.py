@@ -49,8 +49,10 @@ args = parser.parse_args()
 dl = DLink(args.router_url)
 print('Logging in to router...')
 dl.login(args.login, args.password_hash)
-print('Gettin router main page...')
+print('Getting router main page...')
 dl.get_main_site()
+print('Logging out...')
+dl.logout()
 
 # Check if it's actually valid IP
 if dl.public_ip is None or not re.match(r'\d+\.\d+\.\d+\.\d+', dl.public_ip):

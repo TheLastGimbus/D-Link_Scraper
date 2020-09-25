@@ -26,6 +26,9 @@ dl = DLink('http://192.168.1.1')  # Change this if yours has different IP
 dl.login('admin', <YOUR_PASSWORD_HASH>)
 dl.get_main_site()
 print(dl.isp_name)
+
+# You should always log out if you don't want to get "admin is already logged in" later
+dl.logout()
 ```
 
 ### DuckDNS update script
