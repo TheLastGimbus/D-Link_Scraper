@@ -8,6 +8,8 @@ This repo contains a library `dlinkscraper.py` - which you can use to scrape dat
 (and also the reason why I created it :D)
 
 ## Library
+As always, before using, you need to `pip3 install -r requirements.txt`
+
 To scrape the data from you router, you will need a RSA hash of your password - I wasn't smart enough to 
 reverse-engineer on how the router hashes it on login site, so you will need to obtain it yourself:
 1. Open router website
