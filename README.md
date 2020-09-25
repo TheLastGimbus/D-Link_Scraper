@@ -1,5 +1,5 @@
 # D-Link_Scraper
-#### Web scraper to obtain information from D-Link DWR-921 router 
+## Web scraper to obtain information from D-Link DWR-921 router 
 
 This repo contains a library `dlinkscraper.py` - which you can use to scrape data from D-Link DWR-921 router 
 (I don't know if it will work on others, I have only this one :P)
@@ -7,7 +7,7 @@ This repo contains a library `dlinkscraper.py` - which you can use to scrape dat
 ...AND a script `duckdns-update.py`, which is an example on how you can use the library 
 (and also the reason why I created it :D)
 
-## Library
+### Library
 As always, before using, you need to `pip3 install -r requirements.txt`
 
 To scrape the data from you router, you will need a RSA hash of your password - I wasn't smart enough to 
@@ -28,7 +28,7 @@ dl.get_main_site()
 print(dl.isp_name)
 ```
 
-## DuckDNS update script
+### DuckDNS update script
 This script is also simple, you just need to supply
  - your DuckDNS token
  - your DuckDNS domain
