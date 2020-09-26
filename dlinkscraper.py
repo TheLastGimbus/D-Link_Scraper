@@ -42,7 +42,7 @@ class DLink:
         if not login_r.ok:
             raise IOError
         # Scrape the key
-        login_soup = BeautifulSoup(login_r.content)
+        login_soup = BeautifulSoup(login_r.content, features='html.parser')
         pub_key_txt = login_soup.find(id='divpem').text
         pub_key_txt = pub_key_txt.replace('\n', '').strip()
 
