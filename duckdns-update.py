@@ -21,16 +21,8 @@ parser.add_argument(
     help="Login to your router. It's always 'admin', so, yeah, "
          "you don't need to specify it...")
 parser.add_argument(
-    '--password-hash', '-p', type=str, required=True,
-    help=
-    """Hash of your router's password. 
-    To obtain it, you need to use Dev Tools in your browser to "sniff"
-    what you browser sends when you log into router and it makes a POST request to /log/in:
-
-    Open router website -> enable Dev Tools -> Log into your router ->
-    Dev Tools 'Network' tab -> search for POST on /log/in -> Request ->
-    'pw' parameter <= this is what you need
-    """
+    '--password', '-p', type=str, required=True,
+    help="Password to your router's admin"
 )
 parser.add_argument(
     '--router-url', '-u', type=str, required=False, default='http://192.168.1.1',
@@ -43,12 +35,15 @@ parser.add_argument(
 parser.add_argument(
     '--cache-file', type=str, required=False, default='last_ip.txt',
     help='Path to file where last known IP will be cached')
+parser.add_argument(
+    '--js-file', type=str, required=False, default='stolen_javascript.js',
+    help='Path to file with stolen JS')
 
 args = parser.parse_args()
 
 dl = DLink(args.router_url)
 print('Logging in to router...')
-dl.login(args.login, args.password_hash)
+dl.login(args.login, args.password, js_path=args.js_file)
 print('Getting router main page...')
 dl.get_main_site()
 print('Logging out...')
