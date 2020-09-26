@@ -10,20 +10,11 @@ This repo contains a library `dlinkscraper.py` - which you can use to scrape dat
 ### Library
 As always, before using, you need to `pip3 install -r requirements.txt`
 
-To scrape the data from you router, you will need a RSA hash of your password - I wasn't smart enough to 
-reverse-engineer on how the router hashes it on login site, so you will need to obtain it yourself:
-1. Open router website
-2. Enable Dev Tools in your browser (usually Ctrl + Shift + i )
-3. Log into your router
-4. Look at Dev Tools 'Network' tab
-5. Search for POST request on /log/in
-6. 'Request' tab -> 'pw' parameter <= this is what you need
-
 Then using it is simple:
 ```python
 from dlinkscraper import DLink
 dl = DLink('http://192.168.1.1')  # Change this if yours has different IP
-dl.login('admin', <YOUR_PASSWORD_HASH>)
+dl.login('admin', <PASSWORD>)
 dl.get_main_site()
 print(dl.isp_name)
 
@@ -31,11 +22,18 @@ print(dl.isp_name)
 dl.logout()
 ```
 
+Because it executes some JS that I stole from login page, it needs to access `stolen_javascript.js`
+
+If you want to use this without `cd`'ing to it's folder, you need to specify path to it:
+```python
+dl.login('admin', 'pass', '/path/to/stolen_javascript.js')
+```
+
 ### DuckDNS update script
 This script is also simple, you just need to supply
  - your DuckDNS token
  - your DuckDNS domain
- - password hash
+ - password to router
  
 Optionally you can specify:
  - base URL to your router (default is 'http://192.168.1.1')
