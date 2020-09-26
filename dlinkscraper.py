@@ -73,7 +73,7 @@ class DLink:
         public_ip
         """
         main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm')
-        if not main_r.ok:
+        if not main_r.ok or len(main_r.history) > 0:
             raise IOError
         main_soup = BeautifulSoup(main_r.content, features='html.parser')
 
