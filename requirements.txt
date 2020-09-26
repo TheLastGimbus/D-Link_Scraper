@@ -1,4 +1,4 @@
 requests
 beautifulsoup4
 pycryptodome
-py_mimi_racer==0.4.*
+py_mini_racer==0.4.*
