@@ -1,7 +1,11 @@
+import random
+import string
 import traceback
+import urllib.parse
 
 import requests
 from bs4 import BeautifulSoup
+from py_mini_racer import py_mini_racer
 
 
 class DLink:
@@ -24,27 +28,48 @@ class DLink:
         self.isp_name = None
         self.public_ip = None
 
-    def login(self, login, password_hash):
+    def login(self, login, password, js_path='stolen_javascript.js'):
         """
         Login to your router - you need to do this before you get any other site
 
-        To obtain password hash, you need to use Dev Tools in your browser to "sniff"
-        what you browser sends when you log into router and it makes a POST request to /log/in:
-
-        Open router website -> enable Dev Tools -> Log into your router ->
-        Dev Tools 'Network' tab -> search for POST on /log/in -> Request ->
-        'pw' parameter <= this is what you need
-
         :param login: Your login. It can't be anything else than 'admin' so...
-        :param password_hash: RSA hash of your password
+        :param password: Password to your admin
+        :param js_path: Path to file with stolen JavaScript
         """
-        # Get cookies
-        login_r = self._session.post(
+
+        # Get main site to get public RSA key
+        login_r = self._session.get(self._url + '/loginpage.htm')
+        if not login_r.ok:
+            raise IOError
+        # Scrape the key
+        login_soup = BeautifulSoup(login_r.content)
+        pub_key_txt = login_soup.find(id='divpem').text
+        pub_key_txt = pub_key_txt.replace('\n', '').strip()
+
+        # This is what the site does (in aes.js) before sending password
+        # Why does it generate 16 random digits before password?
+        # ¯\_(ツ)_/¯
+        pwdv = password + ':' + ''.join(random.choice(string.digits) for i in range(16))
+
+        # We need to use JavaScript engine
+        ctx = py_mini_racer.MiniRacer()
+        # ...to execute code that encrypts password before sending.
+        # I couldn't get it working in Python, so I just stole all required JS
+        # and execute it :)
+        with open(js_path, 'r') as f:
+            ctx.eval(f.read())
+        pwd_hash = ctx.eval(f"""
+        var key = RSA.getPublicKey("{pub_key_txt}");
+        RSA.encrypt("{pwdv}", key);
+        """)
+
+        # Get cookies by logging in
+        auth_r = self._session.post(
             self._url +
-            f'/log/in?un={login}&pw={password_hash}'
+            f'/log/in?un={urllib.parse.quote(login)}&pw={urllib.parse.quote(pwd_hash)}'
             f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb='
         )
-        if not login_r.ok:
+        if not auth_r.ok:
             raise IOError
 
     def logout(self):
@@ -73,6 +98,7 @@ class DLink:
         public_ip
         """
         main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm')
+        # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
             raise IOError
         main_soup = BeautifulSoup(main_r.content, features='html.parser')
