@@ -1,6 +1,6 @@
 import argparse
 
-from dlinkscraper.dlinkscraper import DLink
+from dlinkscraper import DLink
 
 
 def main():
@@ -36,12 +36,12 @@ def main():
     except IOError:
         print("Can't scrape main site!")
 
-    print("Network signal strength: " + dl.network_signal_strength)
-    print("Is internet available: " + dl.internet_available)
-    print("Network name: " + dl.network_name)
-    print("Network type: " + dl.network_type)
-    print("ISP name: " + dl.isp_name)
-    print("Public ip: " + dl.public_ip)
+    print(f"Network signal strength: {dl.network_signal_strength}")
+    print(f"Is internet available: {dl.internet_available}")
+    print(f"Network name: {dl.network_name}")
+    print(f"Network type: {dl.network_type}")
+    print(f"ISP name: {dl.isp_name}")
+    print(f"Public ip: {dl.public_ip}")
 
 
 if __name__ == "__main__":
