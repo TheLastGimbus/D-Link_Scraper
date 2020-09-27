@@ -1,3 +1,4 @@
+import pathlib
 import random
 import string
 import traceback
@@ -28,13 +29,12 @@ class DLink:
         self.isp_name = None
         self.public_ip = None
 
-    def login(self, login, password, js_path='stolen_javascript.js'):
+    def login(self, login, password):
         """
         Login to your router - you need to do this before you get any other site
 
         :param login: Your login. It can't be anything else than 'admin' so...
         :param password: Password to your admin
-        :param js_path: Path to file with stolen JavaScript
         """
 
         # Get main site to get public RSA key
@@ -56,8 +56,7 @@ class DLink:
         # ...to execute code that encrypts password before sending.
         # I couldn't get it working in Python, so I just stole all required JS
         # and execute it :)
-        with open(js_path, 'r') as f:
-            ctx.eval(f.read())
+        ctx.eval((pathlib.Path(__file__).parent / 'stolen_javascript.js').read_text())
         pwd_hash = ctx.eval(f"""
         var key = RSA.getPublicKey("{pub_key_txt}");
         RSA.encrypt("{pwdv}", key);
