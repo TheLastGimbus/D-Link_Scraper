@@ -1,11 +1,12 @@
-import random
-import string
-import traceback
-import urllib.parse
+import pathlib as _pathlib
+import random as _random
+import string as _string
+import traceback as _traceback
+import urllib.parse as _urllib_parse
 
-import requests
-from bs4 import BeautifulSoup
-from py_mini_racer import py_mini_racer
+import requests as _re
+from bs4 import BeautifulSoup as _BeautifulSoup
+from py_mini_racer import py_mini_racer as _py_mini_racer
 
 
 class DLink:
@@ -19,8 +20,12 @@ class DLink:
     """
 
     def __init__(self, base_url):
-        self._url = base_url
-        self._session = requests.session()
+        # Safety
+        if base_url[-1] == '/':
+            self._url = base_url[:-1]
+        else:
+            self._url = base_url
+        self._session = _re.session()
         self.network_signal_strength = None
         self.internet_available = False
         self.network_name = None
@@ -28,36 +33,34 @@ class DLink:
         self.isp_name = None
         self.public_ip = None
 
-    def login(self, login, password, js_path='stolen_javascript.js'):
+    def login(self, login, password):
         """
         Login to your router - you need to do this before you get any other site
 
         :param login: Your login. It can't be anything else than 'admin' so...
         :param password: Password to your admin
-        :param js_path: Path to file with stolen JavaScript
         """
 
         # Get main site to get public RSA key
         login_r = self._session.get(self._url + '/loginpage.htm')
         if not login_r.ok:
-            raise IOError
+            raise ConnectionError
         # Scrape the key
-        login_soup = BeautifulSoup(login_r.content, features='html.parser')
+        login_soup = _BeautifulSoup(login_r.content, features='html.parser')
         pub_key_txt = login_soup.find(id='divpem').text
         pub_key_txt = pub_key_txt.replace('\n', '').strip()
 
         # This is what the site does (in aes.js) before sending password
         # Why does it generate 16 random digits before password?
         # ¯\_(ツ)_/¯
-        pwdv = password + ':' + ''.join(random.choice(string.digits) for i in range(16))
+        pwdv = password + ':' + ''.join(_random.choice(_string.digits) for i in range(16))
 
         # We need to use JavaScript engine
-        ctx = py_mini_racer.MiniRacer()
+        ctx = _py_mini_racer.MiniRacer()
         # ...to execute code that encrypts password before sending.
         # I couldn't get it working in Python, so I just stole all required JS
         # and execute it :)
-        with open(js_path, 'r') as f:
-            ctx.eval(f.read())
+        ctx.eval((_pathlib.Path(__file__).parent / 'stolen_javascript.js').read_text())
         pwd_hash = ctx.eval(f"""
         var key = RSA.getPublicKey("{pub_key_txt}");
         RSA.encrypt("{pwdv}", key);
@@ -66,11 +69,15 @@ class DLink:
         # Get cookies by logging in
         auth_r = self._session.post(
             self._url +
-            f'/log/in?un={urllib.parse.quote(login)}&pw={urllib.parse.quote(pwd_hash)}'
+            f'/log/in?un={_urllib_parse.quote(login)}&pw={_urllib_parse.quote(pwd_hash)}'
             f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb='
         )
-        if not auth_r.ok:
-            raise IOError
+        def _is_redirect_ok(location: str):
+            question = location.index('?')
+            return location[:question] != '/uir/loginpage.htm'
+
+        if not auth_r.ok or not _is_redirect_ok(auth_r.history[0].headers['Location']):
+            raise ConnectionError
 
     def logout(self):
         """
@@ -100,8 +107,8 @@ class DLink:
         main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm')
         # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
-            raise IOError
-        main_soup = BeautifulSoup(main_r.content, features='html.parser')
+            raise ConnectionError
+        main_soup = _BeautifulSoup(main_r.content, features='html.parser')
 
         # network_signal_strength
         try:
@@ -109,7 +116,7 @@ class DLink:
             self.network_signal_strength = int(signal_text[signal_text.index('-'): -4])
         except:
             print("Can't scrape network_signal_strength! Error:")
-            traceback.print_exc()
+            _traceback.print_exc()
 
         # internet_available
         try:
@@ -117,14 +124,14 @@ class DLink:
                 'src') == 'Home_Internet_GreenCircle.png'
         except:
             print("Can't scrape internet_available! Error:")
-            traceback.print_exc()
+            _traceback.print_exc()
 
         # network_type
         try:
             self.network_type = main_soup.find(id='_3g_service').text.lower()
         except:
             print("Can't scrape network_type! Error:")
-            traceback.print_exc()
+            _traceback.print_exc()
 
         # isp_name
         try:
@@ -134,11 +141,11 @@ class DLink:
             self.isp_name = network_script[variable_index:end_index]
         except:
             print("Can't scrape isp_name! Error:")
-            traceback.print_exc()
+            _traceback.print_exc()
 
         # public_ip
         try:
             self.public_ip = main_soup.find(id='_3g_ip').text.strip()
         except:
             print("Can't scrape public_ip! Error:")
-            traceback.print_exc()
+            _traceback.print_exc()

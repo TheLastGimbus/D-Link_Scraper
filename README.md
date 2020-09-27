@@ -1,16 +1,14 @@
-# D-Link_Scraper
-## Web scraper to obtain information from D-Link DWR-921 router 
+# D-Link Scraper
+### This is a library that gets information from your D-Link DWR-921 (and possible others) LTE router admin page using web scraping
 
-This repo contains a library `dlinkscraper.py` - which you can use to scrape data from D-Link DWR-921 router 
+This package contains 
+ - library `dlinkscraper` - which you can use to scrape data from D-Link DWR-921 LTE router 
 (I don't know if it will work on others, I have only this one :P)
+ - CLI tool `dlinkscraper` that you can use to get info from console
+ - `dlinkscraper-duckdns-update` script, which updates your DuckDNS IP
+(and it's also the reason why I created this package :D)
 
-...AND a script `duckdns-update.py`, which is an example on how you can use the library 
-(and also the reason why I created it :D)
-
-### Library
-As always, before using, you need to `pip3 install -r requirements.txt`
-
-Then using it is simple:
+#### Library usage example
 ```python
 from dlinkscraper import DLink
 dl = DLink('http://192.168.1.1')  # Change this if yours has different IP
@@ -22,21 +20,11 @@ print(dl.isp_name)
 dl.logout()
 ```
 
-Because it executes some JS that I stole from login page, it needs to access `stolen_javascript.js`
+#### CLI usage
+Just run `dlinkscraper` from terminal and follow the instructions
 
-If you want to use this without `cd`'ing to it's folder, you need to specify path to it:
-```python
-dl.login('admin', 'pass', '/path/to/stolen_javascript.js')
+#### DuckDNS script usage
+Provide all required variables listed in `--help`. Example:
+```shell script
+dlinkscraper-duckdns-update --token <YOUR_DUCKDNS_TOKEN> --domain <YOUR_DOMAIN> -p <ROUTER_PASSWORD>
 ```
-
-### DuckDNS update script
-This script is also simple, you just need to supply
- - your DuckDNS token
- - your DuckDNS domain
- - password to router
- 
-Optionally you can specify:
- - base URL to your router (default is 'http://192.168.1.1')
- - login
-
-All options are in `--help`
