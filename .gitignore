@@ -3,3 +3,6 @@
 __pycache__/
 venv/
 last_ip.txt
+build/
+dist/
+*.egg-info
