@@ -10,7 +10,7 @@ setuptools.setup(
     version="0.0.1",
     description="Scraper for getting data from D-Link DWR-921 LTE router",
     long_description=README,
-    long_description_content='text/markdown',
+    long_description_content_type='text/markdown',
     url='https://github.com/TheLastGimbus/D-Link_Scraper',
     author='TheLastGimbus',
     author_email='mateusz.soszynski@tuta.io',
