@@ -31,7 +31,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'dlinkscraper=dlinkscraper.__main__:main',
-            'dlinkscraper-duckdns-update=dlinkscraper._dlinkscraper_duckdns_update:main'
+            'dlinkscraper-duckdns-update=dlinkscraper._duckdns_update_script:main'
         ]
     }
 )
