@@ -68,7 +68,11 @@ class DLink:
             f'/log/in?un={_urllib_parse.quote(login)}&pw={_urllib_parse.quote(pwd_hash)}'
             f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb='
         )
-        if not auth_r.ok:
+        def _is_redirect_ok(location: str):
+            question = location.index('?')
+            return location[:question] != '/uir/loginpage.htm'
+
+        if not auth_r.ok or not _is_redirect_ok(auth_r.history[0].headers['Location']):
             raise ConnectionError
 
     def logout(self):
