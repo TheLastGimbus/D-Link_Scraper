@@ -20,7 +20,11 @@ class DLink:
     """
 
     def __init__(self, base_url):
-        self._url = base_url
+        # Safety
+        if base_url[-1] == '/':
+            self._url = base_url[:-1]
+        else:
+            self._url = base_url
         self._session = _re.session()
         self.network_signal_strength = None
         self.internet_available = False
