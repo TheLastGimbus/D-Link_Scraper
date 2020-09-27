@@ -30,7 +30,8 @@ setuptools.setup(
     install_requires=(HERE/'requirements.txt').read_text().split('\n'),
     entry_points={
         'console_scripts': [
-            'dlinkscraper=dlinkscraper.__main__:main'
+            'dlinkscraper=dlinkscraper.__main__:main',
+            'dlinkscraper-duckdns-update=dlinkscraper._dlinkscraper_duckdns_update:main'
         ]
     }
 )
