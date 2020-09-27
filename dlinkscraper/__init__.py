@@ -40,7 +40,7 @@ class DLink:
         # Get main site to get public RSA key
         login_r = self._session.get(self._url + '/loginpage.htm')
         if not login_r.ok:
-            raise IOError
+            raise ConnectionError
         # Scrape the key
         login_soup = _BeautifulSoup(login_r.content, features='html.parser')
         pub_key_txt = login_soup.find(id='divpem').text
@@ -69,7 +69,7 @@ class DLink:
             f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb='
         )
         if not auth_r.ok:
-            raise IOError
+            raise ConnectionError
 
     def logout(self):
         """
@@ -99,7 +99,7 @@ class DLink:
         main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm')
         # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
-            raise IOError
+            raise ConnectionError
         main_soup = _BeautifulSoup(main_r.content, features='html.parser')
 
         # network_signal_strength

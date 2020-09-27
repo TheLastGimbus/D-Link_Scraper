@@ -5,7 +5,7 @@ def main():
 
     import requests
 
-    from dlinkscraper.dlinkscraper import DLink
+    from dlinkscraper import DLink
 
     parser = argparse.ArgumentParser(
         'DuckDNS Updater',

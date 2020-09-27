@@ -26,14 +26,14 @@ def main():
     print('Logging in...')
     try:
         dl.login(args.login, args.password)
-    except IOError:
+    except ConnectionError:
         print("Can't log in!")
         exit(-1)
 
     print('Scraping all the data I can...')
     try:
         dl.get_main_site()
-    except IOError:
+    except ConnectionError:
         print("Can't scrape main site!")
 
     print(f"Network signal strength: {dl.network_signal_strength}")
