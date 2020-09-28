@@ -42,7 +42,7 @@ class DLink:
         """
 
         # Get main site to get public RSA key
-        login_r = self._session.get(self._url + '/loginpage.htm')
+        login_r = self._session.get(self._url + '/loginpage.htm', verify=False)
         if not login_r.ok:
             raise ConnectionError
         # Scrape the key
@@ -70,7 +70,8 @@ class DLink:
         auth_r = self._session.post(
             self._url +
             f'/log/in?un={_urllib_parse.quote(login)}&pw={_urllib_parse.quote(pwd_hash)}'
-            f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb='
+            f'&rd=%2Fuir%2Fdwrhome.htm&rd2=%2Fuir%2Floginpage.htm&Nrd=1&Nlmb=',
+            verify=False
         )
         def _is_redirect_ok(location: str):
             question = location.index('?')
@@ -86,7 +87,7 @@ class DLink:
         You should always do this if you don' want to get
         "admin is currently logged in" all the times
         """
-        self._session.get(self._url + '/log/out')
+        self._session.get(self._url + '/log/out', verify=False)
 
     def get_main_site(self):
         """
@@ -104,7 +105,7 @@ class DLink:
 
         public_ip
         """
-        main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm')
+        main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm', verify=False)
         # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
             raise ConnectionError
