@@ -7,7 +7,7 @@ README = (HERE/"README.md").read_text()
 
 setuptools.setup(
     name="dlink-scraper",
-    version="1.0.0",
+    version="1.0.1",
     description="Scraper for getting data from D-Link DWR-921 LTE router",
     long_description=README,
     long_description_content_type='text/markdown',
