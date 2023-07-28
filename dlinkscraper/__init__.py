@@ -105,7 +105,7 @@ class DLink:
 
         public_ip
         """
-        main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm', verify=False)
+        main_r = self._session.get(f'{self._url}/uir/dwrhome.htm', verify=False)
         # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
             raise ConnectionError
