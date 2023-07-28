@@ -16,6 +16,10 @@ dl.login('admin', <PASSWORD>)
 dl.get_main_site()
 print(dl.isp_name)
 
+# to get some LTE stats:
+dl.get_lte_info()
+print(dl.rssi, dl.rscp, dl.rsrp, dl.sinr)
+
 # You should always log out if you don't want to get "admin is already logged in" later
 dl.logout()
 ```
