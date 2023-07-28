@@ -89,6 +89,19 @@ class DLink:
         """
         self._session.get(self._url + '/log/out', verify=False)
 
+    def get_lte_info(self):
+        main_r = self._session.get(f'{self._url}/uir/internet_lteinfo.htm', verify=False)
+        if not main_r.ok or len(main_r.history) > 0:
+            raise ConnectionError
+        main_soup = _BeautifulSoup(main_r.content, features='html.parser')
+
+        for stat in ("rssi", "rscp", "rsrp", "sinr"):
+            try:
+                setattr(self, stat, int(main_soup.find(id=stat).text.strip(" dBm")))
+            except:
+                print(f"Can't scrape {stat}! Error:")
+                _traceback.print_exc()
+
     def get_main_site(self):
         """
         Loads main site on router
