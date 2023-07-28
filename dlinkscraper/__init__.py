@@ -102,6 +102,15 @@ class DLink:
                 print(f"Can't scrape {stat}! Error:")
                 _traceback.print_exc()
 
+        for stat in ("tx_packet", "tx_error", "tx_over", "tx_byte",
+                     "rx_packet", "rx_error", "rx_over", "rx_byte",
+                     "cell", "imei"):
+            try:
+                setattr(self, stat, int(main_soup.find(id=stat).text))
+            except:
+                print(f"Can't scrape {stat}! Error:")
+                _traceback.print_exc()
+
     def get_main_site(self):
         """
         Loads main site on router
