@@ -89,6 +89,28 @@ class DLink:
         """
         self._session.get(self._url + '/log/out', verify=False)
 
+    def get_lte_info(self):
+        main_r = self._session.get(f'{self._url}/uir/internet_lteinfo.htm', verify=False)
+        if not main_r.ok or len(main_r.history) > 0:
+            raise ConnectionError
+        main_soup = _BeautifulSoup(main_r.content, features='html.parser')
+
+        for stat in ("rssi", "rscp", "rsrp", "sinr"):
+            try:
+                setattr(self, stat, int(main_soup.find(id=stat).text.strip(" dBm")))
+            except:
+                print(f"Can't scrape {stat}! Error:")
+                _traceback.print_exc()
+
+        for stat in ("tx_packet", "tx_error", "tx_over", "tx_byte",
+                     "rx_packet", "rx_error", "rx_over", "rx_byte",
+                     "cell", "imei"):
+            try:
+                setattr(self, stat, int(main_soup.find(id=stat).text))
+            except:
+                print(f"Can't scrape {stat}! Error:")
+                _traceback.print_exc()
+
     def get_main_site(self):
         """
         Loads main site on router
@@ -105,7 +127,7 @@ class DLink:
 
         public_ip
         """
-        main_r = self._session.get('http://192.168.1.1/uir/dwrhome.htm', verify=False)
+        main_r = self._session.get(f'{self._url}/uir/dwrhome.htm', verify=False)
         # If there was a redirect then we didn't log in successfully
         if not main_r.ok or len(main_r.history) > 0:
             raise ConnectionError
